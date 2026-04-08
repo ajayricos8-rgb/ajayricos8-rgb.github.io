@@ -1,25 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Ajayricos 8 RGB - Trading</title>
-    <script src="https://dforge.site/assets/js/main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajayricos 8 RGB</title>
+    <script src="https://dforge.site/js/app.js"></script>
+    <style>
+        body { background-color: #0e1016; color: white; text-align: center; font-family: sans-serif; padding-top: 50px; }
+    </style>
 </head>
 <body>
-    <div id="dforge-app"></div>
+    <div id="app">Loading Trading Platform...</div>
+
     <script>
-        // Your specific DForge configuration
-        const siteConfig = {
+        const config = {
             "serverUrl": "wss://ws.derivws.com/websockets/v3",
             "siteName": "Ajayricos 8 RGB",
-            "appId": 132592,
+            "appId": "132592",
             "tradingEngine": "v1"
         };
-        
-        // This launches the site
+
+        // This attempts to start the app
         window.onload = function() {
-            if(window.DForge) {
-                DForge.init(siteConfig);
+            if (typeof DForge !== 'undefined') {
+                DForge.init(config);
+            } else if (typeof initApp === 'function') {
+                initApp(config);
+            } else {
+                document.getElementById('app').innerHTML = "Connecting to Deriv...";
+                // Fallback for some DForge versions
+                setTimeout(() => {
+                   if(window.renderApp) window.renderApp(config);
+                }, 1000);
             }
         };
     </script>
