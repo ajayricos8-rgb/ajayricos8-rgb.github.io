@@ -1,2 +1,2 @@
 # ricosgoat.github.io
-A deriv therd-party site 
+A deriv third-party site 
