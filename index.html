@@ -2,48 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajayricos 8 RGB Trading</title>
-    <script src="https://dforge.site/assets/js/main.js"></script>
+    <script src="https://dforge.site/assets/js/main.js" async></script>
     <style>
-        body { background-color: #0e1016; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
-        #app { text-align: center; padding: 20px; }
-        .btn { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-weight: bold; margin-top: 20px; display: none; }
+        body { background-color: #0e1016; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #app { text-align: center; border: 1px solid #2c3e50; padding: 40px; border-radius: 12px; background: #151921; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background: #2980b9; }
+        #status { font-size: 1.1rem; color: #bdc3c7; }
     </style>
 </head>
 <body>
     <div id="app">
-        <div id="status">Initializing Platform...</div>
-        <button id="forceBtn" class="btn" onclick="manualStart()">Launch Manually</button>
+        <div id="status">System Standby...</div>
+        <button id="forceBtn" class="btn" style="display: none;" onclick="manualStart()">Initialize Engine</button>
     </div>
 
     <script>
         const config = {
-            "serverUrl": "wss://ws.derivws.com/websockets/v3",
-            "siteName": "Ajayricos 8 RGB",
-            "appId": "132595",
-            "tradingEngine": "v1"
+            serverUrl: "wss://ws.derivws.com/websockets/v3",
+            siteName: "Ajayricos 8 RGB",
+            appId: "132595"
         };
 
         function manualStart() {
-            if (window.DForge) {
+            if (typeof DForge !== 'undefined') {
+                document.getElementById('status').innerHTML = "🚀 Launching...";
                 DForge.init(config);
             } else {
-                alert("Engine still loading, please wait 5 seconds.");
+                alert("The trading engine hasn't loaded yet. Check your internet connection.");
             }
         }
 
-        window.onload = function() {
-            setTimeout(() => {
-                if (window.DForge) {
-                    DForge.init(config);
-                    document.getElementById('status').innerHTML = "Connecting...";
-                } else {
-                    document.getElementById('status').innerHTML = "Network slow...";
-                    document.getElementById('forceBtn').style.display = "inline-block";
-                }
-            }, 3000);
-        };
+        // Check for DForge availability every 1 second
+        const checkInterval = setInterval(() => {
+            if (typeof DForge !== 'undefined') {
+                clearInterval(checkInterval);
+                document.getElementById('status').innerHTML = "✅ Engine Ready";
+                DForge.init(config);
+            }
+        }, 1000);
+
+        // Show manual button if it takes longer than 5 seconds
+        setTimeout(() => {
+            if (typeof DForge === 'undefined') {
+                document.getElementById('status').innerHTML = "⚠️ Connection Delayed";
+                document.getElementById('forceBtn').style.display = "inline-block";
+            }
+        }, 5000);
     </script>
 </body>
 </html>
+
