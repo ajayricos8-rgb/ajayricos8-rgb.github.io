@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajayricos 8 RGB</title>
-    <script src="https://dforge.site/js/app.js"></script>
+    <title>Ajayricos 8 RGB | Trading</title>
+    <script src="https://dforge.site/js/main.js"></script>
     <style>
-        body { background-color: #0e1016; color: white; text-align: center; font-family: sans-serif; padding-top: 50px; }
+        body { background-color: #0e1016; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
+        #app { text-align: center; }
+        .spinner { border: 4px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 4px solid #3498db; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div id="app">Loading Trading Platform...</div>
+    <div id="app">
+        <div class="spinner"></div>
+        <div id="status">Starting Trading Engine...</div>
+    </div>
 
     <script>
         const config = {
@@ -20,20 +26,18 @@
             "tradingEngine": "v1"
         };
 
-        // This attempts to start the app
-        window.onload = function() {
-            if (typeof DForge !== 'undefined') {
-                DForge.init(config);
-            } else if (typeof initApp === 'function') {
-                initApp(config);
+        // This function waits for the library to be fully ready
+        function launchApp() {
+            if (window.DForge || window.initApp) {
+                const starter = window.DForge ? DForge.init : window.initApp;
+                starter(config);
             } else {
-                document.getElementById('app').innerHTML = "Connecting to Deriv...";
-                // Fallback for some DForge versions
-                setTimeout(() => {
-                   if(window.renderApp) window.renderApp(config);
-                }, 1000);
+                document.getElementById('status').innerHTML = "Still connecting... please wait.";
+                setTimeout(launchApp, 2000); // Try again in 2 seconds
             }
-        };
+        }
+
+        window.onload = launchApp;
     </script>
 </body>
 </html>
